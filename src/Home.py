@@ -12,7 +12,7 @@ st.write("It eliminates the inconvenience of switching between Streamlit and the
             "providing a more streamlined development experience.")
 st.write("For a working demo please checkout `src/Demo.py` file. You can run it by the command")
 st.code("""
-git clone https://github.com/VirajAgarwal1/couchbase_streamlit_connector.git
+git clone https://github.com/Couchbase-Ecosystem/couchbase_streamlit_connector.git
 cd ./couchbase_streamlit_connector
 pip install -r requirements.txt
 pip install plotly geopy numpy

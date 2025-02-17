@@ -3,9 +3,9 @@
 ## 1. Introduction
 This project provides a seamless integration between Streamlit and Couchbase, allowing developers to interact with Couchbase databases effortlessly. It enables users to fetch, insert, update, and delete data within Streamlit applications without needing to switch between different SDKs, enhancing the overall development experience.
 
-For a working demo please checkou `src/Demo.py` file. You can run it by the command
+For a working demo please checkout `src/Demo.py` file. You can run it by the command
 ```bash
-git clone https://github.com/VirajAgarwal1/couchbase_streamlit_connector.git
+git clone https://github.com/Couchbase-Ecosystem/couchbase_streamlit_connector.git
 cd ./couchbase_streamlit_connector
 pip install -r requirements.txt
 pip install plotly geopy numpy
@@ -14,6 +14,8 @@ streamlit run src/Demo.py
 
 ## 2. Prerequisites
 ### System Requirements
+- Python 3.10 or higher installed.
+- Ensure that the Python version is [compatible](https://docs.couchbase.com/python-sdk/current/project-docs/compatibility.html#python-version-compat) with the Couchbase SDK.
 - Couchbase Capella account ([Docs](https://docs.couchbase.com/cloud/get-started/intro.html))
 - An operational cluster created in a project
 - Configured cluster access permissions and allowed IP addresses ([Docs](https://docs.couchbase.com/cloud/get-started/connect.html#prerequisites))

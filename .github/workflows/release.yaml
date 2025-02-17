@@ -34,6 +34,9 @@ jobs:
         id: hatch_version_step
         run: echo "VERSION=$(hatch version)" >> $GITHUB_OUTPUT
 
+      - name: Publish release distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v2
@@ -41,8 +44,3 @@ jobs:
           tag_name: v${{ steps.hatch_version_step.outputs.VERSION }} 
           draft: false
           prerelease: false
-
-      - name: Publish release distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          password: ${{ secrets.HATCH_PYPI_TOKEN }}
