@@ -3,13 +3,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "couchbase_streamlit_connector"
+name = "couchbase-streamlit-connector"
 dynamic = ["version"]
 description = 'Connector for Couchbase on Streamlit'
 readme = "README.md"
 requires-python = ">=3.10"
 license = { file = "LICENSE" }
-keywords = ["couchbase", "streamlit", "connector", "couchbase-connector", "streamlit-connector", "couchbase_streamlit_connector"]
+keywords = ["couchbase", "streamlit", "connector", "couchbase-connector", "streamlit-connector", "couchbase-streamlit-connector"]
 authors = [
   { name = "Viraj Agarwal", email = "virajagarwal15@gmail.com" },
 ]
@@ -29,9 +29,9 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/VirajAgarwal1/couchbase_streamlit_connector#readme"
-Issues = "https://github.com/VirajAgarwal1/couchbase_streamlit_connector/issues"
-Source = "https://github.com/VirajAgarwal1/couchbase_streamlit_connector"
+Documentation = "https://github.com/Couchbase-Ecosystem/couchbase-streamlit-connector#readme"
+Issues = "https://github.com/Couchbase-Ecosystem/couchbase-streamlit-connector/issues"
+Source = "https://github.com/Couchbase-Ecosystem/couchbase-streamlit-connector"
 
 [tool.hatch.version]
 path = "src/couchbase_streamlit_connector/__about__.py"
