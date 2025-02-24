@@ -7,7 +7,7 @@ name = "couchbase_streamlit_connector"
 dynamic = ["version"]
 description = 'Connector for Couchbase on Streamlit'
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 license = { file = "LICENSE" }
 keywords = ["couchbase", "streamlit", "connector", "couchbase-connector", "streamlit-connector", "couchbase_streamlit_connector"]
 authors = [
