@@ -108,6 +108,7 @@ st.write(result)
 ```
 
 ## Understanding the Code
+
 The CouchbaseConnector class is responsible for managing the connection and interaction with Couchbase within a Streamlit app. Below is a high-level breakdown:
 - _connect(): Establishes a connection to the Couchbase cluster using credentials from either secrets or kwargs. It initializes the cluster, bucket, scope, and collection.
 - set_bucket_scope_coll(): Allows users to switch the bucket, scope, or collection dynamically. However, this should only be used when necessary to prevent conflicts.
