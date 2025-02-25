@@ -1,6 +1,6 @@
 # Couchbase Connector for Streamlit
 
-## 1. Introduction
+## Introduction
 This project provides a seamless integration between Streamlit and Couchbase, allowing developers to interact with Couchbase databases effortlessly. It enables users to fetch, insert, update, and delete data within Streamlit applications without needing to switch between different SDKs, enhancing the overall development experience.
 
 For a working demo please checkout `src/Demo.py` file. You can run it by the command
@@ -13,7 +13,7 @@ streamlit run src/Demo.py
 ```
 Or access the hosted version: [Demo App](https://couchbase-connector-demo-app.streamlit.app/)
 
-## 2. Prerequisites
+## Prerequisites
 ### System Requirements
 - Ensure you have **Python 3.10 or higher** (check [compatibility](https://docs.couchbase.com/python-sdk/current/project-docs/compatibility.html#python-version-compat) with the Couchbase SDK), a **Couchbase Capella account** ([Docs](https://docs.couchbase.com/cloud/get-started/intro.html)), and an **operational cluster** created in a project.
 - Configured cluster access permissions and allowed IP addresses ([Docs](https://docs.couchbase.com/cloud/get-started/connect.html#prerequisites))
@@ -25,7 +25,7 @@ To install the required dependencies, run:
 pip install couchbase-streamlit-connector
 ```
 
-## 3. Usage Guide
+## Usage Guide
 
 ### Initializing the Connector
 You can set up the Couchbase connection using either of the following methods:
@@ -107,7 +107,7 @@ result = connection.query("SELECT * FROM `travel-sample`.`inventory`.`airline` L
 st.write(result)
 ```
 
-## 4. Understanding the Code
+## Understanding the Code
 
 The CouchbaseConnector class is responsible for managing the connection and interaction with Couchbase within a Streamlit app. Below is a high-level breakdown:
 - _connect(): Establishes a connection to the Couchbase cluster using credentials from either secrets or kwargs. It initializes the cluster, bucket, scope, and collection.
@@ -119,7 +119,7 @@ The CouchbaseConnector class is responsible for managing the connection and inte
 - remove_document(): Deletes a document from the Couchbase collection.
 - query(): Executes N1QL queries against the Couchbase cluster.
 
-## 5. Appendix
+## Appendix
 
 Here are some helpful resources for working with Couchbase and Streamlit:
 
