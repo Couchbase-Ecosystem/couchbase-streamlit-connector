@@ -4,21 +4,27 @@
 
 The **Couchbase-Streamlit Connector** provides a seamless way to integrate Couchbase with Streamlit applications. It simplifies database operations, allowing developers to interact with Couchbase clusters directly within Streamlit without requiring extensive SDK knowledge.  
 
-With this connector, developers can efficiently perform CRUD (Create, Read, Update, Delete) operations, execute N1QL (SQL++) queries, and dynamically manage Couchbase collections, scopes, and buckets—all within a Streamlit app. This enables rapid prototyping and interactive data visualization while leveraging Couchbase’s powerful database capabilities.  
+With this connector, developers can efficiently perform CRUD (Create, Read, Update, Delete) operations, execute SQL++ queries, and dynamically manage Couchbase collections, scopes, and buckets—all within a Streamlit app. This enables rapid prototyping and interactive data visualization while leveraging Couchbase’s powerful database capabilities.  
 
 **Key Benefits**
-- **Simplified Database Access**: Eliminates the need for complex SDK implementations.  
+- **Simplified Database Access**: Eliminates the need for seperate SDK implementations.  
 - **Streamlit-Native Integration**: Designed to work seamlessly with `st.connection()`.  
-- **Flexible Querying**: Supports both key-value operations and SQL-like queries using N1QL.  
+- **Flexible Querying**: Supports both key-value operations and SQL-like queries using SQL++.  
 - **Dynamic Data Management**: Easily switch between different Couchbase buckets, scopes, and collections.  
 - **Improved Developer Productivity**: Reduces boilerplate code, allowing developers to focus on building interactive applications.  
 
 
 ## Prerequisites
-### System Requirements
-- Ensure you have **Python 3.10 or higher** (check [compatibility](https://docs.couchbase.com/python-sdk/current/project-docs/compatibility.html#python-version-compat) with the Couchbase SDK), a **Couchbase Capella account** ([Docs](https://docs.couchbase.com/cloud/get-started/intro.html)), and an **operational cluster** created in a project.
-- Configured cluster access permissions and allowed IP addresses ([Docs](https://docs.couchbase.com/cloud/get-started/connect.html#prerequisites))
-- Connection string obtained from Couchbase Capella
+
+### System Requirements  
+- Ensure you have **Python 3.10 or higher** (check [compatibility](https://docs.couchbase.com/python-sdk/current/project-docs/compatibility.html#python-version-compat) with the Couchbase SDK).  
+- A **Couchbase Capella account** ([Docs](https://docs.couchbase.com/cloud/get-started/intro.html)) **or** a local installation of **Couchbase Server** ([Download](https://www.couchbase.com/downloads)).  
+- An **operational cluster** created in a project (Capella) or properly configured on your local machine (Couchbase Server).  
+- Ensure proper access control:  
+  - For **Couchbase Capella**, configure cluster access permissions and allowlisted IP addresses ([Docs](https://docs.couchbase.com/cloud/get-started/connect.html#prerequisites)).  
+  - For **Couchbase Server**, set up appropriate user roles and permissions ([Docs](https://docs.couchbase.com/server/current/manage/manage-security/manage-users-and-roles.html)).  
+- Obtain the **connection string** for **Couchbase Capella** or **Couchbase Server** by following the official guide: [Docs](https://docs.couchbase.com/python-sdk/current/hello-world/start-using-sdk.html#connect).  
+
 
 ### Installing Dependencies
 To install the required dependencies, run:
@@ -79,7 +85,7 @@ st.help(connection)
 
 
 ## Usage  
-Once the **Couchbase-Streamlit Connector** is set up, you can interact with your Couchbase database using simple functions for **CRUD (Create, Read, Update, Delete) operations** and **N1QL queries**.  
+Once the **Couchbase-Streamlit Connector** is set up, you can interact with your Couchbase database using simple functions for **CRUD (Create, Read, Update, Delete) operations** and **SQL++ queries**.  
 
 ### Performing CRUD Operations  
 You can insert, retrieve, update, and delete documents in your Couchbase collection using the following methods.  
@@ -114,7 +120,7 @@ st.write("Document with id 222 deleted successfully.")
 ```  
 
 ### Running Queries  
-You can execute **N1QL (SQL++) queries** to retrieve and analyze data. 
+You can execute **SQL++ queries** to retrieve and analyze data. 
 **NOTE**: Queries can work across any bucket, scope, and collection in the cluster, regardless of the connection settings.
 For example, to fetch five records from the `airline` collection:  
 ```python
@@ -133,7 +139,7 @@ These examples will help you apply what you've learned and explore more advanced
 
 ## Understanding `CouchbaseConnector`
 
-The `CouchbaseConnector` class extends `BaseConnection` from Streamlit and serves as a custom connector for interacting with Couchbase. It facilitates database connections, collection management, CRUD operations, and query execution.  
+The `CouchbaseConnector` class extends `BaseConnection` from Streamlit and serves as a custom connector for interacting with Couchbase. It facilitates database connections, collection management, CRUD operations, and query execution. The `BaseConnection` class is an **abstract base class (ABC)** that all Streamlit connection types must inherit from. It provides a framework for creating custom database connectors within Streamlit, ensuring standardization across different connection implementations. The core responsibility of `BaseConnection` is to handle connection initialization, caching, and secret management. This ensures that `CouchbaseConnector` follows Streamlit's connection framework while adding database-specific logic. By inheriting `BaseConnection`, the `CouchbaseConnector` class benefits from **automatic reconnection, secret updates, and standardized connection handling**.  
 
 ### 1. **Class Structure and Connection Initialization**
 The class defines `_connect()`, which establishes a connection to a Couchbase cluster:  
@@ -148,6 +154,7 @@ def _connect(self, **kwargs):
     self.collection_name = kwargs.pop("COLLECTION_NAME", None) or self._secrets.get("COLLECTION_NAME", None)
 ```
 
+- This method must be implemented (as described in the abstract `BaseConnection` class).
 - It retrieves the required connection details either from Streamlit secrets or keyword arguments.  
 - Ensures all necessary parameters are provided before attempting a connection.  
 - Uses `ClusterOptions` with `PasswordAuthenticator` to authenticate and establish a connection.  
@@ -222,7 +229,7 @@ def query(self, q, opts=QueryOptions(metrics=True, scan_consistency=QueryScanCon
     result = self.cluster.query(q, opts)
     return result
 ```
-- Runs a SQL++ (N1QL) query on the Couchbase cluster.  
+- Runs a SQL++ query on the Couchbase cluster.  
 - Uses `QueryOptions` to ensure query consistency.  
 
 ### 5. **Error Handling**
@@ -240,126 +247,36 @@ except Exception as e:
 - Ensures that meaningful error messages are displayed when an issue occurs.  
 
 
+## Contributing  
 
-## Understanding `BaseConnection`
+We welcome contributions! Follow these steps to set up your development environment and contribute effectively.  
 
-The `BaseConnection` class is an **abstract base class (ABC)** that all Streamlit connection types must inherit from. It provides a framework for creating custom database connectors within Streamlit, ensuring standardization across different connection implementations.  
-
-The core responsibility of this class is to handle connection initialization, caching, and secret management.  
-
-### **Key Features of `BaseConnection`**
-1. **Abstract Method `_connect()`**  
-   - This method must be implemented by all subclasses.  
-   - It defines how the actual database connection is established.  
-   - The `_instance` property ensures `_connect()` is called only when needed.  
-
-   ```python
-   @abstractmethod
-   def _connect(self, **kwargs) -> RawConnectionT:
-       """Must be implemented by subclasses to create the connection."""
-       raise NotImplementedError
-   ```
-
-2. **Secret Management (`_secrets` Property)**  
-   - Reads connection parameters (like credentials) from `st.secrets`.  
-   - Ensures that database secrets are securely stored and accessed.  
-
-   ```python
-   @property
-   def _secrets(self) -> AttrDict:
-       """Retrieves the connection-specific secrets from Streamlit's secrets manager."""
-       connections_section = secrets_singleton.get("connections", AttrDict({}))
-       return connections_section.get(self._connection_name, AttrDict({}))
-   ```
-
-3. **Connection Reset (`reset()` Method)**  
-   - Allows reinitialization of a stale or expired connection.  
-   - Used in cases where authentication tokens expire or connections break.  
-
-   ```python
-   def reset(self) -> None:
-       """Clears the current connection instance so it can be reinitialized."""
-       self._raw_instance = None
-   ```
-
-4. **Automatic Connection Handling (`_instance` Property)**  
-   - Lazily initializes the database connection when first accessed.  
-   - Ensures that the `_connect()` method is only called when required.  
-
-   ```python
-   @property
-   def _instance(self) -> RawConnectionT:
-       """Returns the active connection instance, creating one if needed."""
-       if self._raw_instance is None:
-           self._raw_instance = self._connect(**self._kwargs)
-       return self._raw_instance
-   ```
-
-5. **Secret Change Handling (`_on_secrets_changed()`)**  
-   - Detects changes in `st.secrets` and resets the connection when needed.  
-   - Helps maintain security and avoid using outdated credentials.  
-
-   ```python
-   def _on_secrets_changed(self, _) -> None:
-       """Resets the connection when secrets change to ensure valid authentication."""
-       self.reset()
-   ```
-
-The `CouchbaseConnector` class extends `BaseConnection`, meaning:  
-- It **inherits** secret management, connection handling, and reset functionalities.  
-- It **implements `_connect()`**, which defines how Couchbase connections are established.  
-
-```python
-class CouchbaseConnector(BaseConnection):
-    def _connect(self, **kwargs):
-        connstr = self._secrets.get("CONNSTR", None)
-        username = self._secrets.get("USERNAME", None)
-        password = self._secrets.get("PASSWORD", None)
-
-        cluster = Cluster(connstr, ClusterOptions(PasswordAuthenticator(username, password)))
-        return cluster
-```
-
-This ensures that `CouchbaseConnector` follows Streamlit's connection framework while adding database-specific logic.  
-
-By inheriting `BaseConnection`, the `CouchbaseConnector` class benefits from **automatic reconnection, secret updates, and standardized connection handling**.  
-
-
-## Contributing
-We welcome contributions to improve this project! Follow the guidelines below to ensure a smooth development process.
-
-### Setting Up the Development Environment
-1. Fork and Clone the repository:
+### Setting Up the Development Environment  
+1. Fork the repository and clone your fork:  
 ```sh
 git clone https://github.com/Couchbase-Ecosystem/couchbase-streamlit-connector
 cd couchbase-streamlit-connector
 ```
-2. Create a virtual environment and install dependencies:
+2. Create a virtual environment and install dependencies:  
 ```sh
 python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+source venv/bin/activate  # On Windows: `venv\Scripts\activate`
 pip install -r requirements.txt
 ```
 
-### Branching & PR Workflow
-New features should follow this branching strategy:
-
-**Feature Development**: Create a new branch for each feature:
+### Contribution Workflow  
+- Follow GitHub’s [PR workflow](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request).  
+- Create a branch for each feature or bug fix:  
 ```sh
 git checkout -b <feature-name>
 ```
-**Pull Request to `main`**: After implementing the feature, open a PR to merge into `main`.
-**Merge to `production`**: Once enough features accumulate in `main`, a merge is made to `production`.
-**CI/CD Deployment**: After approval, the CI/CD pipeline:
-- Builds the project
-- Runs tests
-- Publishes a new release on **PyPi** and **GitHub**
+- Open a PR to `main`. Merges to `production` trigger CI/CD, which builds, tests, and publishes the release.  
 
-### Reporting Issues
-If you find bugs or have feature requests, open an issue on GitHub with:
-- Description of the problem
-- Steps to reproduce
-- Expected behavior
+### Reporting Issues  
+Open a GitHub issue with:  
+- Problem description  
+- Steps to reproduce  
+- Expected behavior  
 
 ## Appendix
 Here are some helpful resources for working with Couchbase and Streamlit:
@@ -367,7 +284,7 @@ Here are some helpful resources for working with Couchbase and Streamlit:
 - [Couchbase Python SDK Compatibility](https://docs.couchbase.com/python-sdk/current/project-docs/compatibility.html#python-version-compat)  
 - [Getting Started with Couchbase Capella](https://docs.couchbase.com/cloud/get-started/intro.html)  
 - [Connecting to Couchbase Capella](https://docs.couchbase.com/cloud/get-started/connect.html#prerequisites)  
-- [N1QL Query Language Guide](https://docs.couchbase.com/server/current/n1ql/n1ql-language-reference/index.html)  
+- [SQL++ Query Language Guide](https://docs.couchbase.com/server/current/n1ql/n1ql-language-reference/index.html)  
 - [Couchbase SDKs Overview](https://docs.couchbase.com/home/sdk.html)  
 
 ### **Streamlit Documentation**
