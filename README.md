@@ -131,8 +131,8 @@ st.write("Query result:", result)
 
 ## Tutorials & Examples  
 Now that you understand the basics of using the **Couchbase-Streamlit Connector**, you can explore practical implementations through the following tutorials:  
-- **[Streamlit Quickstart Tutorial](https://github.com/couchbase-examples/streamlit-quickstart)** – A beginner-friendly guide that walks you through building a simple Streamlit application with Couchbase. This tutorial covers fundamental database interactions, including CRUD operations and queries.  
-- **[Couchbase Connector Demo App](https://github.com/couchbase-examples/couchbase-tutorials/tree/main/tutorial/markdown/python/streamlit)** – A more advanced example demonstrating how to integrate Couchbase with a feature-rich Streamlit application. This tutorial showcases additional functionalities and best practices for building scalable applications.  
+- **[Couhcbase-Streamlit-Connector Quickstart Tutorial](https://github.com/couchbase-examples/streamlit-quickstart)** – A beginner-friendly guide that walks you through building a simple Streamlit application with Couchbase. This tutorial covers fundamental database interactions, including CRUD operations and queries.  
+- **[Flight Search App with Couchbase-Streamlit-Connector](https://developer.couchbase.com/tutorial-couchbase-streamlit-connector)** – A more advanced example demonstrating how to integrate Couchbase with a feature-rich Streamlit application. This tutorial showcases additional functionalities and best practices for building scalable applications.  
 
 These examples will help you apply what you've learned and explore more advanced use cases for Couchbase within Streamlit.  
 
