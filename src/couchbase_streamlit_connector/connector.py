@@ -241,8 +241,8 @@ class CouchbaseConnector(BaseConnection[Cluster]):
         Execute a SQL++ query against the Couchbase cluster. Works on the cluster level.
         
         Args:
-            q (str): The N1QL query to execute.
-            opts (QueryOptions): Options for the query operation, defaulting to metrics and request plus scan consistency.
+            q (str): The SQL++ query to execute.
+            opts (couchbase.options.QueryOptions): Options for the query operation, defaulting to metrics and request plus scan consistency. To learn more about this please refer to [the docs](https://docs.couchbase.com/python-sdk/current/howtos/n1ql-queries-with-sdk.html)
             **kwargs: Additional keyword arguments passed to the `query` method.
         
         Returns:
@@ -250,7 +250,7 @@ class CouchbaseConnector(BaseConnection[Cluster]):
             
         Example:
         ```
-        query = "SELECT * FROM `travel-sample` LIMIT 10"
+        query = "SELECT * FROM `travel-sample`.`inventory`.`airline` LIMIT 10"
         result = connection.query(query)
         output = [ row for row in result.rows() ]
         ```
