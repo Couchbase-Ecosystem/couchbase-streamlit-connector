@@ -236,9 +236,27 @@ class CouchbaseConnector(BaseConnection[Cluster]):
             raise Exception(f"ERROR: Failed to remove document with ID '{doc_id}'\n{e}")
 
     # Query
-    def query(self, q, opts=QueryOptions(metrics=True, scan_consistency=QueryScanConsistency.REQUEST_PLUS)):
+    def query(self, q, opts=QueryOptions(metrics=True, scan_consistency=QueryScanConsistency.REQUEST_PLUS), **kwargs):
+        """
+        Execute a SQL++ query against the Couchbase cluster. Works on the cluster level.
+        
+        Args:
+            q (str): The SQL++ query to execute.
+            opts (couchbase.options.QueryOptions): Options for the query operation, defaulting to metrics and request plus scan consistency. To learn more about this please refer to [the docs](https://docs.couchbase.com/python-sdk/current/howtos/n1ql-queries-with-sdk.html)
+            **kwargs: Additional keyword arguments passed to the `query` method.
+        
+        Returns:
+            Result: The result of the query operation.
+            
+        Example:
+        ```
+        query = "SELECT * FROM `travel-sample`.`inventory`.`airline` LIMIT 10"
+        result = connection.query(query)
+        output = [ row for row in result.rows() ]
+        ```
+        """
         try:
-            result = self.cluster.query(q, QueryOptions(metrics=True))
+            result = self.cluster.query(q, opts, **kwargs)
             return result
-        except CouchbaseException as ex:
-            raise Exception(f"ERROR: Couchbase encountered an error")
+        except Exception as ex:
+            raise Exception(f"ERROR: Couchbase encountered an error\n{ex}")
