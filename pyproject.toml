@@ -25,7 +25,7 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
 dependencies = [
-  "couchbase", "streamlit"
+  "couchbase==4.3.5", "streamlit==1.44.1"
 ]
 
 [project.urls]
