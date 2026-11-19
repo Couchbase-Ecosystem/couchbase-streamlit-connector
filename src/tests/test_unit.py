@@ -1,4 +1,4 @@
-from couchbase_streamlit_connector.connector import CouchbaseConnector
+from couchbase_streamlit_connector.connector import CouchbaseConnector, REQUIRED_CONFIG_KEYS, resolve_connection_config
 import streamlit as st
 import pytest
 from unittest.mock import MagicMock, patch
@@ -95,3 +95,50 @@ def test_get_bucket_scope_coll(connection):
     assert returnde_obj['bucket'] is not None
     assert returnde_obj['scope'] is not None
     assert returnde_obj['collection'] is not None
+
+def test_resolve_connection_config_prefers_kwargs_over_secrets():
+    """kwargs win over secrets, secrets fill the gaps, and resolved keys are consumed from kwargs"""
+    kwargs = {"CONNSTR": "couchbase://kwarg", "USERNAME": "kwarg_user", "EXTRA": "kept"}
+    secrets = {key: f"secret_{key}" for key in REQUIRED_CONFIG_KEYS}
+
+    config = resolve_connection_config(kwargs, secrets)
+
+    assert config["CONNSTR"] == "couchbase://kwarg"
+    assert config["USERNAME"] == "kwarg_user"
+    assert config["PASSWORD"] == "secret_PASSWORD"
+    assert config["COLLECTION_NAME"] == "secret_COLLECTION_NAME"
+    assert kwargs == {"EXTRA": "kept"}
+
+
+def test_resolve_connection_config_empty_kwarg_falls_back_to_secrets():
+    """An empty kwarg value does not shadow the secrets value"""
+    secrets = {key: f"secret_{key}" for key in REQUIRED_CONFIG_KEYS}
+
+    config = resolve_connection_config({"PASSWORD": ""}, secrets)
+
+    assert config["PASSWORD"] == "secret_PASSWORD"
+
+
+def test_resolve_connection_config_reports_all_missing_keys_in_order():
+    """Every missing key is listed, in the documented order"""
+    with pytest.raises(ValueError, match="Missing required configuration variables: PASSWORD, SCOPE_NAME, COLLECTION_NAME"):
+        resolve_connection_config(
+            {"CONNSTR": "couchbase://localhost", "USERNAME": "user", "SCOPE_NAME": ""},
+            {"BUCKET_NAME": "bucket"},
+        )
+
+
+@patch('couchbase_streamlit_connector.connector.Cluster')
+def test_connection_without_config_raises_before_connecting(mock_Cluster):
+    """st.connection surfaces the missing-config error and never opens a cluster"""
+    with pytest.raises(ValueError, match="Missing required configuration variables: .*COLLECTION_NAME"):
+        st.connection(
+            "couchbase_missing_config",
+            type=CouchbaseConnector,
+            CONNSTR="CONNSTR",
+            USERNAME="USERNAME",
+            PASSWORD="PASSWORD",
+            BUCKET_NAME="BUCKET_NAME",
+            SCOPE_NAME="SCOPE_NAME",
+        )
+    mock_Cluster.assert_not_called()

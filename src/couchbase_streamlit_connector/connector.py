@@ -11,6 +11,24 @@ from couchbase.durability import Durability, ServerDurability
 from couchbase.exceptions import CouchbaseException, AuthenticationException, TimeoutException
 import pandas as pd
 
+REQUIRED_CONFIG_KEYS = ("CONNSTR", "USERNAME", "PASSWORD", "BUCKET_NAME", "SCOPE_NAME", "COLLECTION_NAME")
+
+
+def resolve_connection_config(kwargs: dict, secrets) -> dict:
+    """
+    Resolve the required connection settings, preferring values passed to `st.connection(...)`
+    over the connection's secrets section. Resolved keys are popped from `kwargs`.
+
+    Raises:
+        ValueError: If any required setting is missing or empty, listing every missing key.
+    """
+    config = {key: kwargs.pop(key, None) or secrets.get(key, None) for key in REQUIRED_CONFIG_KEYS}
+    missing_vars = [key for key in REQUIRED_CONFIG_KEYS if not config[key]]
+    if missing_vars:
+        raise ValueError(f"Missing required configuration variables: {', '.join(missing_vars)}")
+    return config
+
+
 class CouchbaseConnector(BaseConnection[Cluster]):    
     """
     The connector class for performing common Couchbase operations such as insert, get, replace, and remove documents.
@@ -42,28 +60,13 @@ class CouchbaseConnector(BaseConnection[Cluster]):
         self.scope_name: str = None
         self.collection_name: str = None
         
-        connstr = kwargs.pop("CONNSTR", None) or self._secrets.get("CONNSTR", None)
-        username = kwargs.pop("USERNAME", None) or self._secrets.get("USERNAME", None)
-        password = kwargs.pop("PASSWORD", None) or self._secrets.get("PASSWORD", None)
-        self.bucket_name: str = kwargs.pop("BUCKET_NAME", None) or self._secrets.get("BUCKET_NAME", None)
-        self.scope_name: str = kwargs.pop("SCOPE_NAME", None) or self._secrets.get("SCOPE_NAME", None)
-        self.collection_name: str = kwargs.pop("COLLECTION_NAME", None) or self._secrets.get("COLLECTION_NAME", None)
-                
-        if not all([connstr, username, password, self.bucket_name, self.scope_name, self.collection_name]):
-            missing_vars = []
-            if not connstr:
-                missing_vars.append("CONNSTR")
-            if not username:
-                missing_vars.append("USERNAME")
-            if not password:
-                missing_vars.append("PASSWORD")
-            if not self.bucket_name:
-                missing_vars.append("BUCKET_NAME")
-            if not self.scope_name:
-                missing_vars.append("SCOPE_NAME")
-            if not self.collection_name:
-                missing_vars.append("COLLECTION_NAME")
-            raise ValueError(f"Missing required configuration variables: {', '.join(missing_vars)}")
+        config = resolve_connection_config(kwargs, self._secrets)
+        connstr = config["CONNSTR"]
+        username = config["USERNAME"]
+        password = config["PASSWORD"]
+        self.bucket_name = config["BUCKET_NAME"]
+        self.scope_name = config["SCOPE_NAME"]
+        self.collection_name = config["COLLECTION_NAME"]
                 
         try:
             options = ClusterOptions(PasswordAuthenticator(username, password))
